@@ -6,6 +6,7 @@ use App\Item;
 use App\TodoList;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class TodoListTest extends TestCase
@@ -32,13 +33,13 @@ class TodoListTest extends TestCase
         ]);
 
         $this->todoList = $this->getMockBuilder(TodoList::class)
-            ->onlyMethods(['user', 'actualItemsCount', 'getLastItem'])
+            ->onlyMethods(['actualItemsCount', 'getLastItem'])
             ->getMock();
+        $this->todoList->user = $this->user;
     }
 
     public function testCanAddItemNominal()
     {
-        $this->todoList->expects($this->any())->method('user')->willReturn($this->user);
         $this->todoList->expects($this->any())->method('actualItemsCount')->willReturn(0);
         $this->todoList->expects($this->any())->method('getLastItem')->willReturn($this->item);
 
@@ -47,8 +48,6 @@ class TodoListTest extends TestCase
 
     public function testCannotAddItemMaxNumberReached()
     {
-
-        $this->todoList->expects($this->any())->method('user')->willReturn($this->user);
         $this->todoList->expects($this->any())->method('actualItemsCount')->willReturn(10);
         $this->todoList->expects($this->any())->method('getLastItem')->willReturn($this->item);
 
@@ -60,7 +59,6 @@ class TodoListTest extends TestCase
 
     public function testCannotAddItemLastTooRecent()
     {
-        $this->todoList->expects($this->any())->method('user')->willReturn($this->user);
         $this->todoList->expects($this->any())->method('actualItemsCount')->willReturn(0);
 
         $recentItem = $this->item->replicate();
@@ -75,9 +73,8 @@ class TodoListTest extends TestCase
 
     public function testCannotAddItemUserNotValid()
     {
-        $this->user->email = 'test';
+        $this->todoList->user->email = 'test';
 
-        $this->todoList->expects($this->any())->method('user')->willReturn($this->user);
         $this->todoList->expects($this->any())->method('actualItemsCount')->willReturn(0);
         $this->todoList->expects($this->any())->method('getLastItem')->willReturn($this->item);
 
@@ -96,5 +93,43 @@ class TodoListTest extends TestCase
         $badItem->name = '';
 
         $this->todoList->canAddItem($badItem);
+    }
+
+    public function testIsValidNominal()
+    {
+        $todoList = TodoList::make([
+            'name' => 'good_name',
+            'description' => 'good_description'
+        ]);
+
+        $this->assertTrue($todoList->isValid());
+    }
+
+    public function testIsValidWithoutDescription()
+    {
+        $todoList = TodoList::make([
+            'name' => 'good_name',
+        ]);
+
+        $this->assertTrue($todoList->isValid());
+    }
+
+    public function testIsNotValidNoName()
+    {
+        $todoList = TodoList::make([
+            'description' => 'good_description'
+        ]);
+
+        $this->assertFalse($todoList->isValid());
+    }
+
+    public function testIsNotValidDescriptionTooLong()
+    {
+        $todoList = TodoList::make([
+            'name' => 'good_name',
+            'description' => Str::random(300)
+        ]);
+
+        $this->assertFalse($todoList->isValid());
     }
 }

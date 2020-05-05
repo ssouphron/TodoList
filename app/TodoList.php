@@ -24,7 +24,14 @@ class TodoList extends Model
 
     public function items()
     {
-        return $this->hasMany(Item::class);
+        return $this->hasMany(Item::class)->orderBy('created_at', 'desc');
+    }
+
+    public function isValid(): bool
+    {
+        return !empty($this->name)
+            && strlen($this->name) <= 255
+            && (is_null($this->description) || strlen($this->description) <= 255);
     }
 
     /**
@@ -38,13 +45,9 @@ class TodoList extends Model
             throw new Exception('Item is null or invalid');
         }
 
-        // dd($this->user());
-
-        if (is_null($this->user()) || !$this->user()->isValid()) {
+        if (is_null($this->user) || !$this->user->isValid()) {
             throw new Exception('User is null or invalid');
         }
-
-        // dd($this->items());
 
         if ($this->actualItemsCount() >= 10) {
             throw new Exception('Todo list has too many items');
@@ -60,7 +63,7 @@ class TodoList extends Model
 
     public function getLastItem(): ?Item
     {
-        return $this->items()->orderBy('created_at', 'desc')->firstOr(null);
+        return $this->items->first();
     }
 
     protected function actualItemsCount()
