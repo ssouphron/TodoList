@@ -21,7 +21,8 @@ class TodoListTest extends TestCase
 
         $this->item = new Item([
             'name' => 'Nom de ma todo',
-            'content' => 'Description de ma todo list'
+            'content' => 'Description de ma todo list',
+            'created_at' => Carbon::now()->subHour()
         ]);
 
         $this->user = new User([

@@ -61,7 +61,7 @@ class TodoList extends Model
         return $item;
     }
 
-    public function getLastItem(): ?Item
+    protected function getLastItem(): ?Item
     {
         return $this->items->first();
     }
