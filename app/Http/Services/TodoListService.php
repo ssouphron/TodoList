@@ -11,6 +11,13 @@ use App\User;
 class TodoListService
 {
 
+    private $emailService;
+
+    public function __construct(EmailService $emailService)
+    {
+        $this->emailService = $emailService;
+    }
+
     public function createTodoList(User $user, string $name, ?string $description): bool
     {
         if (is_null($user) || !$user->isValid()) {
@@ -50,6 +57,11 @@ class TodoListService
         if ($user->todoList->canAddItem($item)) {
             $user->todoList->items()->save($item);
             $user->todoList->load('items');
+
+            if ($this->emailService->shouldSend($user)) {
+                $this->emailService->send($user, $item);
+            }
+
             return true;
         }
 
