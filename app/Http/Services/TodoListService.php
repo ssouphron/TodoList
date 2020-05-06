@@ -36,6 +36,12 @@ class TodoListService
             return false;
         }
 
+        foreach ($user->todoList->items as $item) {
+            if ($item->name == $name) {
+                return false;
+            }
+        }
+
         $item = Item::make([
             'name' => $name,
             'content' => $content
@@ -43,6 +49,7 @@ class TodoListService
 
         if ($user->todoList->canAddItem($item)) {
             $user->todoList->items()->save($item);
+            $user->todoList->load('items');
             return true;
         }
 

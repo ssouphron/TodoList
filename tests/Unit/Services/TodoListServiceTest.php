@@ -41,7 +41,7 @@ class TodoListServiceTest extends TestCase
     public function testAddItemNominal()
     {
         $this->user->todoList()->save(TodoList::make(['name' => 'name', 'description' => 'desc']));
-        $this->assertTrue($this->sut->addItem($this->user, 'name', 'content'));
+        $this->assertTrue($this->sut->addItem($this->user, 'itemName', 'content'));
     }
 
     public function testAddItemInvalidItem()
@@ -50,13 +50,27 @@ class TodoListServiceTest extends TestCase
         $this->expectExceptionMessage('Item is null or invalid');
 
         $this->user->todoList()->save(TodoList::make(['name' => 'name', 'description' => 'desc']));
-        $this->assertFalse($this->sut->addItem($this->user, 'name', Str::random(1050)));
+        $this->assertFalse($this->sut->addItem($this->user, 'itemName', Str::random(1050)));
     }
 
     public function testAddItemInvalidUser()
     {
         $this->user->todoList()->save(TodoList::make(['name' => 'name', 'description' => 'desc']));
         $this->user->email = 'test';
-        $this->assertFalse($this->sut->addItem($this->user, 'name', 'content'));
+        $this->assertFalse($this->sut->addItem($this->user, 'itemName', 'content'));
+    }
+
+    public function testAddNonUniqueItem()
+    {
+        $this->user->todoList()->save(TodoList::make(['name' => 'name', 'description' => 'desc']));
+        $this->assertTrue($this->sut->addItem($this->user, 'itemName', 'contentFirstItem'));
+        $this->assertDatabaseHas('items', [
+            'name' => 'itemName',
+            'content' => 'contentFirstItem'
+        ]);
+        $this->assertFalse($this->sut->addItem($this->user, 'itemName', 'contentSecondItem'));
+        $this->assertDatabaseMissing('items', [
+            'content' => 'contentSecondItem'
+        ]);
     }
 }
