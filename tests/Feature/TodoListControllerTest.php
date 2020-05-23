@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\User;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Str;
 use Tests\TestCase;
