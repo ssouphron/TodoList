@@ -2,7 +2,6 @@
 
 namespace App;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Item extends Model
@@ -26,14 +25,5 @@ class Item extends Model
         return !empty($this->name)
             && !empty($this->content)
             && strlen($this->content) <= 1000;
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            $model->created_at = Carbon::now();
-        });
     }
 }

@@ -35,7 +35,7 @@ class TodoListService
         return true;
     }
 
-    public function addItem(User $user, string $name, string $content)
+    public function addItem(User $user, string $name, string $content): bool
     {
         if (is_null($user) || !$user->isValid()) {
             return false;
@@ -56,7 +56,7 @@ class TodoListService
 
         if ($user->todoList->canAddItem($item)) {
             $user->todoList->items()->save($item);
-            $user->todoList->load('items');
+             $user->todoList->load('items');
 
             if ($this->emailService->shouldSend($user)) {
                 $this->emailService->send($user, $item);

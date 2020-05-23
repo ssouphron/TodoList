@@ -19,7 +19,7 @@ class EmailService
      */
     public function send(User $user, Item $item): void
     {
-        throw new Exception('Not yet implemented');
+        //
     }
 
     public function shouldSend(User $user): bool

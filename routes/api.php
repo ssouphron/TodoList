@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +13,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::prefix('v1')->group(function () {
+
+    /* User APIs */
+    Route::get('users/{user}', 'UserController@show');
+    Route::post('users', 'UserController@store');
+
+    /* TodoList APIs */
+    Route::get('users/{user}/todo_lists', 'TodoListController@show');
+    Route::post('users/{user}/todo_lists', 'TodoListController@store');
+    Route::post('users/{user}/todo_lists/items', 'TodoListController@storeItem');
+
 });

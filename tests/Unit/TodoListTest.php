@@ -41,10 +41,12 @@ class TodoListTest extends TestCase
 
     public function testCanAddItemNominal()
     {
-        $this->todoList->expects($this->any())->method('actualItemsCount')->willReturn(0);
+        $this->todoList->expects($this->once())->method('actualItemsCount')->willReturn(0);
         $this->todoList->expects($this->any())->method('getLastItem')->willReturn($this->item);
 
-        $this->assertNotNull($this->todoList->canAddItem($this->item));
+        $canAddItem = $this->todoList->canAddItem($this->item);
+        $this->assertNotNull($canAddItem);
+        $this->assertEquals('Nom de ma todo', $canAddItem->name);
     }
 
     public function testCannotAddItemMaxNumberReached()
