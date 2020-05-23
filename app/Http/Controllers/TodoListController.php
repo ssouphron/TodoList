@@ -20,8 +20,7 @@ class TodoListController extends Controller
 
     protected function show(User $user): JsonResponse
     {
-        $userWithTodoList = User::whereId($user->id)->with('todoList.items')->first();
-        return response()->json(['todo_list' => $userWithTodoList->todoList]);
+        return response()->json(['todo_list' => $this->todoListService->getTodoListWithItems($user)]);
     }
 
     /**
@@ -39,11 +38,13 @@ class TodoListController extends Controller
             throw new Exception("Error occurred while user todo list creation");
         }
 
-        return response()->json(['todo_list' => User::whereId($user->id)->with('todoList.items')->first()->todoList]);
+        return response()
+            ->json(['todo_list' => $this->todoListService->getTodoListWithItems($user)])
+            ->setStatusCode(201);
     }
 
     /**
-     * @param TodoListRequest $request
+     * @param ItemRequest $request
      * @param User $user
      * @return JsonResponse
      * @throws Exception
@@ -57,6 +58,8 @@ class TodoListController extends Controller
             throw new Exception("Error occurred while adding item to todo list");
         }
 
-        return response()->json(['todo_list' => User::whereId($user->id)->with('todoList.items')->first()->todoList]);
+        return response()
+            ->json(['todo_list' => $this->todoListService->getTodoListWithItems($user)])
+            ->setStatusCode(201);
     }
 }

@@ -68,4 +68,9 @@ class TodoListService
         return false;
     }
 
+    public function getTodoListWithItems(User $user): TodoList
+    {
+        return User::whereId($user->id)->with('todoList.items')->first()->todoList;
+    }
+
 }
