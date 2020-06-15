@@ -41,7 +41,7 @@ class TodoListTest extends TestCase
 
     public function testCanAddItemNominal()
     {
-        $this->todoList->expects($this->once())->method('actualItemsCount')->willReturn(0);
+        $this->todoList->expects($this->once())->method('actualItemsCount')->willReturn(1);
         $this->todoList->expects($this->any())->method('getLastItem')->willReturn($this->item);
 
         $canAddItem = $this->todoList->canAddItem($this->item);
@@ -52,7 +52,6 @@ class TodoListTest extends TestCase
     public function testCannotAddItemMaxNumberReached()
     {
         $this->todoList->expects($this->any())->method('actualItemsCount')->willReturn(10);
-        $this->todoList->expects($this->any())->method('getLastItem')->willReturn($this->item);
 
         $this->expectException('Exception');
         $this->expectExceptionMessage('Todo list has too many items');

@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 
 class TodoListController extends Controller
 {
-    private $todoListService;
+    private TodoListService $todoListService;
 
     public function __construct(TodoListService $todoListService)
     {
